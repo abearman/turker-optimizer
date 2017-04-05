@@ -1,9 +1,13 @@
 import sys
 import time
 import random
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 TEN_MINUTE_RETAINER_MILLIS = 600000
 TEN_MINUTE_RETAINER_SECONDS = 600
+NUM_WORKERS = 20
 
 def get_delays():
 	with open("delays.tsv") as f:
@@ -81,11 +85,21 @@ def run_simulator(delays, num_workers_desired=5, duration_seconds=86400):
 			histogram_dict[num_workers_online] = 1
 
 		#print "Workers currently online: ", num_workers_online
+	return histogram_dict 
+
+
+def plot_histogram(histogram, num_desired_workers):
+	plt.bar(histogram.keys(), histogram.values())
+	plt.xlabel("Num workers online")
+	plt.ylabel("Frequency of occurrence (seconds)")
+	plt.title("Desired workers = " + str(num_desired_workers))
+	plt.show()
+
 
 def main():
 	delays = get_delays()
-	run_simulator(delays, num_workers_desired=10)
-	
+	histogram = run_simulator(delays, num_workers_desired=NUM_WORKERS)
+	plot_histogram(histogram, NUM_WORKERS)	
 
 if __name__ == "__main__": main()
 
